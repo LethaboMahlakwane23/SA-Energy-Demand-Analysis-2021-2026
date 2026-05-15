@@ -22,6 +22,16 @@
 
 
 
+**Problem 3: Demand Variability During Weather-Stressed Periods**
+
+* Daily average temperature was calculated across Durban, Cape Town, and Johannesburg.
+* Days were classified as Heatwave (top 5%), Cold Snap (bottom 5%), or Normal.
+* Demand variability was measured using standard deviation (SD) and coefficient of variation (CV).
+* Cold Snap = SD of 3,172 MW and CV of 0.128, Heatwave = SD of 1,532 MW and CV of 0.067, Normal = SD of 2,273 MW and CV of 0.097.
+* Takeaway: Electricity demand becomes most volatile during cold snaps, while heatwaves show comparatively more stable demand patterns.
+
+
+
 **Tech Stack**
 
 ***Language***: R

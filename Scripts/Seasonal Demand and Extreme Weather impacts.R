@@ -170,3 +170,64 @@ ggplot(peak_summary, aes(x = extreme, y = mean_demand_MW, fill = extreme)) +
   ) +
   scale_fill_manual(values = c("Very Hot" = "red", "Very Cold" = "blue", "Normal" = "grey")) +
   theme_minimal()
+
+######################################Problem 3###########################################
+
+
+# Rename categories for clearer interpretation
+daily_temp <- daily_temp %>%
+  mutate(
+    period_type = case_when(
+      extreme == "Very Hot"  ~ "heatwave",
+      extreme == "Very Cold" ~ "cold_snap",
+      TRUE                   ~ "normal"
+    )
+  )
+
+# Merge weather classification into demand data
+df2 <- df %>%
+  left_join(
+    daily_temp %>% select(date, period_type),
+    by = "date"
+  )
+
+# Calculate daily variability measures
+daily_variability <- df2 %>%
+  group_by(date, period_type) %>%
+  summarise(
+    daily_mean = mean(Residual.Demand, na.rm = TRUE),
+    daily_sd   = sd(Residual.Demand, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    daily_cv = daily_sd / daily_mean
+  )
+
+# Summarise variability across weather conditions
+final_variability <- daily_variability %>%
+  group_by(period_type) %>%
+  summarise(
+    avg_sd = mean(daily_sd, na.rm = TRUE),
+    avg_cv = mean(daily_cv, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+print(final_variability)
+
+# Plot coefficient of variation
+ggplot(daily_variability,
+       aes(x = period_type,
+           y = daily_cv,
+           fill = period_type)) +
+  geom_boxplot() +
+  labs(
+    title = "Demand Variability Across Weather Conditions",
+    x = "Weather Condition",
+    y = "Coefficient of Variation"
+  ) +
+  scale_fill_manual(values = c(
+    "heatwave" = "red",
+    "cold_snap" = "blue",
+    "normal" = "grey"
+  )) +
+  theme_minimal()
